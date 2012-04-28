@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Remote control, bitches</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body> 
+  <p><a id="play" href="#">Play</a></p>
+    <p><a id="pause" href="#">Pause</a></p>
+    <p><a id="unload" href="#">Stop</a></p>
+
+<script src="/socket.io/socket.io.js"></script>
+  <script>
+  var socket = io.connect('http://192.168.1.147:3000');
+  (function() {
+      function addEvent(element, eventName, callback) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, callback, false);
+            }
+            else {
+                element.attachEvent(eventName, callback, false);
+            }
+        }
+
+      var playBtn = document.querySelector('#play'),
+          pauseBtn = document.querySelector('#pause'),
+          stopBtn = document.querySelector('#unload');
+
+      addEvent(playBtn, 'click', function(e) {
+          e.preventDefault();
+          console.log('playing');
+          socket.emit('play');
+      }, false);
+
+      addEvent(pauseBtn, 'click', function(e) {
+          e.preventDefault();
+          console.log('pausing');
+          socket.emit('pause');
+      }, false);
+
+      addEvent(stopBtn, 'click', function(e) {
+          e.preventDefault();
+          console.log('stopping');
+          socket.emit('stop');
+      }, false);
+
+      socket.on('play',function(data) {
+        console.log('go play');
+      });
+
+  })();
+</script>
+  </body>
+</html>

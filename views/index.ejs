@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Remote control, bitches</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <iframe id="player_1" src="http://player.vimeo.com/video/38205958?api=1&amp;player_id=player_1" width="1000" height="566" frameborder="0"></iframe>
+
+    <p><a id="play" href="#">Play</a></p>
+    <p><a id="pause" href="#">Pause</a></p>
+    <p><a id="unload" href="#">Stop</a></p>
+                    
+<script src="/javascripts/froogaloop.js"></script> 
+<script>
+  var froogaloop = false;
+	(function() {
+        function addEvent(element, eventName, callback) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, callback, false);
+            }
+            else {
+                element.attachEvent(eventName, callback, false);
+            }
+        }
+        
+		var vimeoPlayer = document.querySelectorAll('iframe'),
+			  player = vimeoPlayer[0];
+		//console.log($f(player));return;
+
+		$f(player).addEvent('ready', ready);
+		
+		
+		function ready(player_id) {
+			froogaloop =  $f(player_id);
+
+      var playBtn = document.querySelector('#play'),
+      	  pauseBtn = document.querySelector('#pause'),
+      	  unloadBtn = document.querySelector('#unload')
+
+			// Call play when play button clicked
+      addEvent(playBtn, 'click', function(e) {
+	      e.preventDefault();
+        froogaloop.api('play');
+      }, false);
+
+      // Call pause when pause button clicked
+      addEvent(pauseBtn, 'click', function(e) {
+      	e.preventDefault();
+        froogaloop.api('pause');
+      }, false);
+
+      // Call unload when unload button clicked
+      addEvent(unloadBtn, 'click', function(e) {
+      	e.preventDefault();
+        froogaloop.api('unload');
+      }, false);
+		}
+
+	})();
+</script>   
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://localhost:3000');
+  socket.on('play', function (data) {
+    froogaloop.api('play');
+  });
+
+  socket.on('pause', function(data) {
+    froogaloop.api('pause');
+  })
+
+  socket.on('stop', function(data) {
+    froogaloop.api('unload');
+  });
+</script>
+  </body>
+</html>
